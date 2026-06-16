@@ -1,0 +1,7 @@
+{
+  "name": "budget-super",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npx browser-sync start --server --files '*.html, *.css, *.js'"
+  }
+}
