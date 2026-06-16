@@ -211,6 +211,118 @@ class RapportApp {
     }
 }
 
+class GoalsApp {
+    constructor() {
+        this.goals = this.loadGoals();
+        this.form = document.getElementById('goalsForm');
+        this.goalNameInput = document.getElementById('goalName');
+        this.goalTargetInput = document.getElementById('goalTarget');
+        this.goalCurrentInput = document.getElementById('goalCurrent');
+        this.goalsList = document.getElementById('goalsList');
+
+        this.setupEventListeners();
+        this.render();
+    }
+
+    setupEventListeners() {
+        this.form.addEventListener('submit', (e) => this.handleAddGoal(e));
+    }
+
+    handleAddGoal(e) {
+        e.preventDefault();
+
+        const goal = {
+            id: Date.now(),
+            name: this.goalNameInput.value,
+            targetAmount: parseFloat(this.goalTargetInput.value),
+            currentAmount: parseFloat(this.goalCurrentInput.value),
+            createdDate: new Date().toISOString().split('T')[0]
+        };
+
+        this.goals.push(goal);
+        this.saveGoals();
+        this.form.reset();
+        this.render();
+    }
+
+    saveGoals() {
+        localStorage.setItem('saving_goals', JSON.stringify(this.goals));
+    }
+
+    loadGoals() {
+        const stored = localStorage.getItem('saving_goals');
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    calculateProgress(goal) {
+        const percentage = goal.targetAmount > 0
+            ? (goal.currentAmount / goal.targetAmount) * 100
+            : 0;
+        const remaining = Math.max(0, goal.targetAmount - goal.currentAmount);
+        const isCompleted = percentage >= 100;
+
+        return {
+            percentage: Math.min(percentage, 100),
+            remaining,
+            isCompleted
+        };
+    }
+
+    formatCurrency(amount) {
+        return amount.toFixed(2).replace('.', ',') + '€';
+    }
+
+    deleteGoal(id) {
+        this.goals = this.goals.filter(goal => goal.id !== id);
+        this.saveGoals();
+        this.render();
+    }
+
+    renderGoals() {
+        if (this.goals.length === 0) {
+            this.goalsList.innerHTML = '<p class="empty-message">Aucun objectif enregistré</p>';
+            return;
+        }
+
+        const sorted = [...this.goals].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+
+        this.goalsList.innerHTML = sorted
+            .map(goal => {
+                const progress = this.calculateProgress(goal);
+                return `
+                    <div class="goals-card">
+                        <div class="goal-header">${goal.name}</div>
+                        <div class="goal-progress-text">${this.formatCurrency(goal.currentAmount)} / ${this.formatCurrency(goal.targetAmount)} sauvegardés</div>
+                        <div class="goal-remaining">${this.formatCurrency(progress.remaining)} à épargner</div>
+                        <div class="goal-progress-bar-container">
+                            <div class="goal-progress-bar-fill" style="width: 0%;">
+                                <span class="goal-percentage">${progress.percentage.toFixed(0)}%</span>
+                            </div>
+                        </div>
+                        <button class="goal-delete-btn" onclick="window.goalsApp.deleteGoal(${goal.id})">Supprimer</button>
+                    </div>
+                `;
+            })
+            .join('');
+
+        // Trigger animations
+        setTimeout(() => {
+            const fills = this.goalsList.querySelectorAll('.goal-progress-bar-fill');
+            const sortedGoals = [...this.goals].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+            fills.forEach((fill, index) => {
+                if (sortedGoals[index]) {
+                    const progress = this.calculateProgress(sortedGoals[index]);
+                    fill.style.width = progress.percentage + '%';
+                }
+            });
+        }, 10);
+    }
+
+    render() {
+        this.renderGoals();
+    }
+}
+
 class Router {
     constructor() {
         this.currentPage = 'dashboard';
@@ -391,11 +503,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const budgetApp = new BudgetApp();
     const incomeApp = new IncomeApp();
     const rapportApp = new RapportApp();
+    const goalsApp = new GoalsApp();
 
     // Store references globally so they can access each other
     window.budgetApp = budgetApp;
     window.incomeApp = incomeApp;
     window.rapportApp = rapportApp;
+    window.goalsApp = goalsApp;
 
     // Initialize Router after all apps are ready
     new Router();
