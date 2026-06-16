@@ -10,7 +10,7 @@
     <!-- Fixed Header -->
     <header class="header">
         <div class="header-content">
-            <h1 class="logo">💰 Budget-Super</h1>
+            <h1 class="logo" style="cursor: pointer;" onclick="location.reload();">💰 Budget-Super</h1>
         </div>
     </header>
 
@@ -55,9 +55,11 @@
                             <select id="category" required>
                                 <option value="">Sélectionner une catégorie</option>
                                 <option value="Alimentation">Alimentation</option>
+                                <option value="Loisirs">Loisirs</option>
+                                <option value="Santé">Santé</option>
                                 <option value="Transport">Transport</option>
-                                <option value="Divertissement">Divertissement</option>
-                                <option value="Autre">Autre</option>
+                                <option value="Logement">Logement</option>
+                                <option value="Autres">Autres</option>
                             </select>
                         </div>
 
@@ -138,8 +140,34 @@
                         <div class="ratio-bar-expense" id="ratioBarExpense" style="width: 0%"></div>
                     </div>
                     <div class="ratio-bar-legend">
-                        <div class="legend-item"><span class="legend-box" style="background-color: #0D8B8B;"></span>Revenus</div>
+                        <div class="legend-item"><span class="legend-box" style="background-color: #1E3A8A;"></span>Revenus</div>
                         <div class="legend-item"><span class="legend-box" style="background-color: #E74C3C;"></span>Dépenses</div>
+                    </div>
+
+                    <!-- Pie Chart Section -->
+                    <div class="pie-chart-container">
+                        <div id="pieChartVisualization" class="pie-chart-visualization">
+                            <div class="pie-chart" id="pieChart">
+                                <span class="pie-slice-label pie-slice-label--spent" id="pieChartSpentSlice">0%</span>
+                                <span class="pie-slice-label pie-slice-label--remaining" id="pieChartRemainingSlice">0%</span>
+                            </div>
+                            <div class="pie-chart-legend">
+                                <div class="pie-legend-item">
+                                    <span class="pie-legend-swatch pie-legend-swatch--expenses"></span>
+                                    <span class="pie-legend-text">
+                                        <span data-i18n="pie_legend_expenses">Dépensé</span>:
+                                        <strong id="pieChartSpent">0€</strong>
+                                    </span>
+                                </div>
+                                <div class="pie-legend-item">
+                                    <span class="pie-legend-swatch pie-legend-swatch--remaining"></span>
+                                    <span class="pie-legend-text">
+                                        <span data-i18n="pie_legend_remaining">Restant</span>:
+                                        <strong id="pieChartRemaining">0€</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -160,8 +188,8 @@
                     <h3>Ajouter un Objectif</h3>
                     <form id="goalsForm">
                         <div class="form-group">
-                            <label for="goalName">Nom de l'Objectif</label>
-                            <input type="text" id="goalName" placeholder="ex: Vacances d'Été, Voiture" required>
+                            <label for="goalName" data-i18n="goal_name">Nom de l'Objectif</label>
+                            <input type="text" id="goalName" data-i18n-placeholder="goal_name_placeholder" placeholder="ex: Achat Voiture, Vacances, Fonds d'urgence" required>
                         </div>
 
                         <div class="form-group">

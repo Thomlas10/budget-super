@@ -39,7 +39,7 @@ const translations = {
         goals_title: 'Mes Objectifs d\'Épargne',
         add_goal_title: 'Ajouter un Objectif',
         goal_name: 'Nom de l\'Objectif',
-        goal_name_placeholder: 'ex: Vacances d\'Été, Voiture',
+        goal_name_placeholder: 'ex: Achat Voiture, Vacances, Fonds d\'urgence',
         target_amount: 'Montant Cible',
         current_saved: 'Montant Épargné',
         add_goal_btn: 'Ajouter l\'Objectif',
@@ -81,7 +81,10 @@ const translations = {
         reset_label: 'Réinitialisation',
         reset_desc: 'Supprimer toutes les données et réinitialiser l\'application',
         reset_btn: 'Réinitialiser l\'application',
-        reset_confirm: 'Voulez-vous vraiment réinitialiser toutes vos données ?'
+        reset_confirm: 'Voulez-vous vraiment réinitialiser toutes vos données ?',
+        pie_legend_expenses: 'Dépensé',
+        pie_legend_remaining: 'Restant',
+        of_budget: 'du budget'
     },
     en: {
         nav_dashboard: 'Dashboard',
@@ -123,7 +126,7 @@ const translations = {
         goals_title: 'My Savings Goals',
         add_goal_title: 'Add a Goal',
         goal_name: 'Goal Name',
-        goal_name_placeholder: 'e.g., Summer Vacation, Car',
+        goal_name_placeholder: 'e.g., Buy a Car, Vacations, Emergency Fund',
         target_amount: 'Target Amount',
         current_saved: 'Amount Saved',
         add_goal_btn: 'Add Goal',
@@ -165,7 +168,10 @@ const translations = {
         reset_label: 'Reset',
         reset_desc: 'Delete all data and reset the application',
         reset_btn: 'Reset application',
-        reset_confirm: 'Do you really want to reset all your data?'
+        reset_confirm: 'Do you really want to reset all your data?',
+        pie_legend_expenses: 'Spent',
+        pie_legend_remaining: 'Remaining',
+        of_budget: 'of budget'
     },
     es: {
         nav_dashboard: 'Tablero',
@@ -207,7 +213,7 @@ const translations = {
         goals_title: 'Mis Objetivos de Ahorro',
         add_goal_title: 'Añadir un Objetivo',
         goal_name: 'Nombre del Objetivo',
-        goal_name_placeholder: 'ej: Vacaciones de Verano, Coche',
+        goal_name_placeholder: 'ej: Comprar Coche, Vacaciones, Fondo de emergencia',
         target_amount: 'Cantidad Objetivo',
         current_saved: 'Cantidad Ahorrada',
         add_goal_btn: 'Añadir Objetivo',
@@ -249,7 +255,10 @@ const translations = {
         reset_label: 'Reiniciar',
         reset_desc: 'Elimina todos los datos y reinicia la aplicación',
         reset_btn: 'Reiniciar aplicación',
-        reset_confirm: '¿Realmente deseas reiniciar todos tus datos?'
+        reset_confirm: '¿Realmente deseas reiniciar todos tus datos?',
+        pie_legend_expenses: 'Gastado',
+        pie_legend_remaining: 'Restante',
+        of_budget: 'del presupuesto'
     }
 };
 
@@ -524,14 +533,44 @@ class RapportApp {
         this.ratioBarExpenseElement = document.getElementById('ratioBarExpense');
         this.categoryBarsContainer = document.getElementById('categoryBarsContainer');
 
+        this.expenses = [];
+        this.incomes = [];
+        this.subscriptions = [];
+        this.goals = [];
+
         this.render();
         currencyManager.onCurrencyChange((currency) => this.onCurrencyChange(currency));
+    }
+
+    loadFreshData() {
+        const expensesRaw = localStorage.getItem('expenses');
+        this.expenses = expensesRaw ? JSON.parse(expensesRaw) : [];
+
+        const incomesRaw = localStorage.getItem('incomes');
+        this.incomes = incomesRaw ? JSON.parse(incomesRaw) : [];
+
+        const subsRaw = localStorage.getItem('monthly_subscriptions');
+        this.subscriptions = subsRaw ? JSON.parse(subsRaw) : [];
+
+        const goalsRaw = localStorage.getItem('saving_goals');
+        this.goals = goalsRaw ? JSON.parse(goalsRaw) : [];
+
+        // Sync sibling apps so the rest of the app sees fresh data too
+        if (window.budgetApp) window.budgetApp.expenses = this.expenses;
+        if (window.incomeApp) window.incomeApp.incomes = this.incomes;
+        if (window.subscriptionsApp) window.subscriptionsApp.subscriptions = this.subscriptions;
+        if (window.goalsApp) window.goalsApp.goals = this.goals;
     }
 
     getCategoryColor(category) {
         const colors = {
             'Alimentation': '#0D8B8B',
+            'Loisirs': '#7B4A9F',
+            'Santé': '#E11D48',
             'Transport': '#2C5F7F',
+            'Logement': '#D4A017',
+            'Autres': '#6B7D8B',
+            // Backwards compatibility with previous category names
             'Divertissement': '#7B4A9F',
             'Autre': '#6B7D8B'
         };
@@ -539,11 +578,8 @@ class RapportApp {
     }
 
     calculateGlobalStats() {
-        const expenses = window.budgetApp ? window.budgetApp.expenses : [];
-        const incomeApp = window.incomeApp;
-
-        const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-        const totalIncome = incomeApp ? incomeApp.getIncomeTotal() : 0;
+        const totalExpenses = this.expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+        const totalIncome = this.incomes.reduce((sum, inc) => sum + (inc.amount || 0), 0);
         const balance = totalIncome - totalExpenses;
 
         const total = totalIncome + totalExpenses;
@@ -560,19 +596,19 @@ class RapportApp {
     }
 
     calculateCategoryStats() {
-        const expenses = window.budgetApp ? window.budgetApp.expenses : [];
         const categoryTotals = {};
 
-        expenses.forEach(expense => {
+        this.expenses.forEach(expense => {
             if (!categoryTotals[expense.category]) {
                 categoryTotals[expense.category] = 0;
             }
-            categoryTotals[expense.category] += expense.amount;
+            categoryTotals[expense.category] += expense.amount || 0;
         });
 
         const totalExpenses = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
 
         return Object.entries(categoryTotals)
+            .filter(([, amount]) => amount > 0)
             .map(([category, amount]) => ({
                 category,
                 amount,
@@ -595,6 +631,64 @@ class RapportApp {
 
         this.ratioBarIncomeElement.style.width = stats.incomePercentage + '%';
         this.ratioBarExpenseElement.style.width = stats.expensePercentage + '%';
+
+        this.renderPieChart(stats);
+    }
+
+    renderPieChart(stats) {
+        const totalIncome = stats.totalIncome || 0;
+        const totalExpenses = stats.totalExpenses || 0;
+        const remainingAmount = Math.max(0, totalIncome - totalExpenses);
+
+        let spentPercent = 0;
+        let remainingPercent = 0;
+        if (totalIncome > 0) {
+            spentPercent = Math.min(100, (totalExpenses / totalIncome) * 100);
+            remainingPercent = Math.max(0, 100 - spentPercent);
+        } else if (totalExpenses > 0) {
+            spentPercent = 100;
+            remainingPercent = 0;
+        }
+
+        const pieChart = document.getElementById('pieChart');
+        const spentDeg = spentPercent * 3.6;
+        if (pieChart) {
+            pieChart.style.background = `conic-gradient(#E11D48 0deg ${spentDeg}deg, #047857 ${spentDeg}deg 360deg)`;
+        }
+
+        // Position the % labels at the angular center of each slice.
+        // conic-gradient starts at 12 o'clock (0deg) and sweeps clockwise.
+        // Convert degrees to x/y inside the 180px circle, label radius ~50px from center.
+        const labelRadiusPct = 28; // % of half-width (28% => 50px on 180px chart)
+        const placeLabel = (el, midpointDeg, percent) => {
+            if (!el) return;
+            el.textContent = `${Math.round(percent)}%`;
+            if (percent <= 0) {
+                el.classList.add('pie-slice-label--hidden');
+                return;
+            }
+            el.classList.remove('pie-slice-label--hidden');
+            const rad = (midpointDeg - 90) * Math.PI / 180; // -90 so 0deg points up
+            const x = 50 + labelRadiusPct * Math.cos(rad);
+            const y = 50 + labelRadiusPct * Math.sin(rad);
+            el.style.left = `${x}%`;
+            el.style.top = `${y}%`;
+        };
+
+        const spentLabel = document.getElementById('pieChartSpentSlice');
+        const remainingLabel = document.getElementById('pieChartRemainingSlice');
+        placeLabel(spentLabel, spentDeg / 2, spentPercent);
+        placeLabel(remainingLabel, (spentDeg + 360) / 2, remainingPercent);
+
+        const pieChartSpent = document.getElementById('pieChartSpent');
+        if (pieChartSpent) {
+            pieChartSpent.textContent = this.formatCurrency(totalExpenses);
+        }
+
+        const pieChartRemaining = document.getElementById('pieChartRemaining');
+        if (pieChartRemaining) {
+            pieChartRemaining.textContent = this.formatCurrency(remainingAmount);
+        }
     }
 
     renderCategoryBars() {
@@ -605,39 +699,41 @@ class RapportApp {
             return;
         }
 
+        const lang = localStorage.getItem('app_language') || 'fr';
+        const dict = (typeof appTranslations !== 'undefined' && appTranslations[lang]) || {};
+        const ofBudgetLabel = translationManager.get('of_budget') || 'du budget';
+
         this.categoryBarsContainer.innerHTML = categories
-            .map(cat => `
+            .map(cat => {
+                const safePercent = Math.max(0, Math.min(100, cat.percentage || 0));
+                const translatedCategory = dict[cat.category] || cat.category;
+                return `
                 <div class="category-bar-item">
                     <div class="category-label">
-                        <span>${cat.category}</span>
+                        <span>${translatedCategory}</span>
                         <span class="category-amount">${this.formatCurrency(cat.amount)}</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: 0%; background-color: ${cat.color};">
-                            <span class="percentage-text">${cat.percentage.toFixed(0)}%</span>
+                        <div class="progress-bar-fill" style="width: ${safePercent}%; background-color: ${cat.color};">
+                            <span class="percentage-text">${safePercent.toFixed(0)}%</span>
                         </div>
                     </div>
-                    <div class="category-percentage">${cat.percentage.toFixed(1)}% du budget</div>
+                    <div class="category-percentage">${safePercent.toFixed(1)}% ${ofBudgetLabel}</div>
                 </div>
-            `)
+            `;
+            })
             .join('');
-
-        // Trigger animations by setting width after render
-        setTimeout(() => {
-            const fills = this.categoryBarsContainer.querySelectorAll('.progress-bar-fill');
-            const categoryStats = this.calculateCategoryStats();
-            fills.forEach((fill, index) => {
-                if (categoryStats[index]) {
-                    fill.style.width = categoryStats[index].percentage + '%';
-                }
-            });
-        }, 10);
     }
 
     render() {
+        this.loadFreshData();
         this.renderGlobalCard();
         this.renderCategoryBars();
         if (typeof translateEntireDOM === 'function') translateEntireDOM();
+    }
+
+    refreshAndRender() {
+        this.render();
     }
 
     onCurrencyChange(newCurrency) {
@@ -966,6 +1062,11 @@ class Router {
 
         this.currentPage = page;
         localStorage.setItem('current_page', page);
+
+        // Force the Rapport to reload fresh data from localStorage every visit
+        if (page === 'rapport' && window.rapportApp && typeof window.rapportApp.refreshAndRender === 'function') {
+            window.rapportApp.refreshAndRender();
+        }
     }
 }
 
@@ -1091,7 +1192,22 @@ class BudgetApp {
     getBalance() {
         const expenseTotal = this.expenses.reduce((sum, expense) => sum + expense.amount, 0);
         const incomeTotal = window.incomeApp ? window.incomeApp.getIncomeTotal() : 0;
-        return incomeTotal - expenseTotal;
+
+        // Calculate total subscriptions
+        let subscriptionsTotal = 0;
+        if (window.subscriptionsApp) {
+            subscriptionsTotal = window.subscriptionsApp.calculateMonthlyTotal();
+        }
+
+        // Calculate total goals (amount already saved)
+        let goalsTotal = 0;
+        if (window.goalsApp) {
+            goalsApp.goals.forEach(goal => {
+                goalsTotal += goal.currentAmount;
+            });
+        }
+
+        return incomeTotal - expenseTotal - subscriptionsTotal - goalsTotal;
     }
 
     updateBalance() {
@@ -1156,7 +1272,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CRITICAL: Run universal text switcher LAST to ensure EVERYTHING is translated
     translateEntireDOM();
+
+    // Smart scroll-driven navbar: hide on scroll down, reveal on scroll up
+    initNavbarScrollAnimation();
 });
+
+function initNavbarScrollAnimation() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+
+    const SCROLL_DELTA_THRESHOLD = 10; // ignore movements ≤ 10px
+    const TOP_SAFE_ZONE = 50;          // always show near the top
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const update = () => {
+        const currentY = window.scrollY;
+
+        // Safe guard: near the top → always visible
+        if (currentY <= TOP_SAFE_ZONE) {
+            navbar.classList.remove('navbar--hidden');
+            lastScrollY = currentY;
+            ticking = false;
+            return;
+        }
+
+        const delta = currentY - lastScrollY;
+
+        // Only act on meaningful movement
+        if (Math.abs(delta) > SCROLL_DELTA_THRESHOLD) {
+            if (delta > 0) {
+                navbar.classList.add('navbar--hidden');     // scrolling down → hide
+            } else {
+                navbar.classList.remove('navbar--hidden');  // scrolling up   → reveal
+            }
+            lastScrollY = currentY;
+        }
+        ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(update);
+            ticking = true;
+        }
+    }, { passive: true });
+}
 
 // ===== COMPREHENSIVE TRANSLATION DICTIONARY =====
 const appTranslations = {
@@ -1348,7 +1509,49 @@ const appTranslations = {
         'Renouvelé le': 'Renouvelé le',
         '/ month': '/ mois',
         '/ mes': '/ mois',
-        '/ mois': '/ mois'
+        '/ mois': '/ mois',
+        // Dropdown placeholders
+        'Select a category': 'Sélectionner une catégorie',
+        'Seleccionar una categoría': 'Sélectionner une catégorie',
+        'Sélectionner une catégorie': 'Sélectionner une catégorie',
+        'Select your preferred language': 'Sélectionnez votre langue préférée',
+        'Selecciona tu idioma preferido': 'Sélectionnez votre langue préférée',
+        'Sélectionnez votre langue préférée': 'Sélectionnez votre langue préférée',
+        'Choose your preferred theme': 'Choisissez votre thème préféré',
+        'Elige tu tema preferido': 'Choisissez votre thème préféré',
+        'Choisissez votre thème préféré': 'Choisissez votre thème préféré',
+        'Choose the currency to display': 'Choisissez la devise à afficher',
+        'Elige la moneda a mostrar': 'Choisissez la devise à afficher',
+        'Choisissez la devise à afficher': 'Choisissez la devise à afficher',
+        // Reset description
+        'Delete all data and reset the application': 'Supprimer toutes les données et réinitialiser l\'application',
+        'Eliminar todos los datos y reiniciar la aplicación': 'Supprimer toutes les données et réinitialiser l\'application',
+        'Supprimer toutes les données et réinitialiser l\'application': 'Supprimer toutes les données et réinitialiser l\'application',
+        // Category options
+        'Food': 'Alimentation',
+        'Alimentación': 'Alimentation',
+        'Alimentation': 'Alimentation',
+        'Leisure': 'Loisirs',
+        'Ocio': 'Loisirs',
+        'Loisirs': 'Loisirs',
+        'Health': 'Santé',
+        'Salud': 'Santé',
+        'Santé': 'Santé',
+        'Transport': 'Transport',
+        'Transporte': 'Transport',
+        'Housing': 'Logement',
+        'Vivienda': 'Logement',
+        'Logement': 'Logement',
+        'Others': 'Autres',
+        'Otros': 'Autres',
+        'Autres': 'Autres',
+        // Pie chart legend
+        'Spent': 'Dépensé',
+        'Gastado': 'Dépensé',
+        'Dépensé': 'Dépensé',
+        'Remaining': 'Restant',
+        'Restante': 'Restant',
+        'Restant': 'Restant'
     },
     en: {
         // Navbar
@@ -1539,7 +1742,49 @@ const appTranslations = {
         'Renovado el': 'Renewed on',
         '/ month': '/ month',
         '/ mois': '/ month',
-        '/ mes': '/ month'
+        '/ mes': '/ month',
+        // Dropdown placeholders
+        'Sélectionner une catégorie': 'Select a category',
+        'Seleccionar una categoría': 'Select a category',
+        'Select a category': 'Select a category',
+        'Sélectionnez votre langue préférée': 'Select your preferred language',
+        'Selecciona tu idioma preferido': 'Select your preferred language',
+        'Select your preferred language': 'Select your preferred language',
+        'Choisissez votre thème préféré': 'Choose your preferred theme',
+        'Elige tu tema preferido': 'Choose your preferred theme',
+        'Choose your preferred theme': 'Choose your preferred theme',
+        'Choisissez la devise à afficher': 'Choose the currency to display',
+        'Elige la moneda a mostrar': 'Choose the currency to display',
+        'Choose the currency to display': 'Choose the currency to display',
+        // Reset description
+        'Supprimer toutes les données et réinitialiser l\'application': 'Delete all data and reset the application',
+        'Eliminar todos los datos y reiniciar la aplicación': 'Delete all data and reset the application',
+        'Delete all data and reset the application': 'Delete all data and reset the application',
+        // Category options
+        'Alimentation': 'Food',
+        'Alimentación': 'Food',
+        'Food': 'Food',
+        'Loisirs': 'Leisure',
+        'Ocio': 'Leisure',
+        'Leisure': 'Leisure',
+        'Santé': 'Health',
+        'Salud': 'Health',
+        'Health': 'Health',
+        'Transport': 'Transport',
+        'Transporte': 'Transport',
+        'Logement': 'Housing',
+        'Vivienda': 'Housing',
+        'Housing': 'Housing',
+        'Autres': 'Others',
+        'Otros': 'Others',
+        'Others': 'Others',
+        // Pie chart legend
+        'Dépensé': 'Spent',
+        'Gastado': 'Spent',
+        'Spent': 'Spent',
+        'Restant': 'Remaining',
+        'Restante': 'Remaining',
+        'Remaining': 'Remaining'
     },
     es: {
         // Navbar
@@ -1730,7 +1975,49 @@ const appTranslations = {
         'Renovado el': 'Renovado el',
         '/ month': '/ mes',
         '/ mois': '/ mes',
-        '/ mes': '/ mes'
+        '/ mes': '/ mes',
+        // Dropdown placeholders
+        'Sélectionner une catégorie': 'Seleccionar una categoría',
+        'Select a category': 'Seleccionar una categoría',
+        'Seleccionar una categoría': 'Seleccionar una categoría',
+        'Sélectionnez votre langue préférée': 'Selecciona tu idioma preferido',
+        'Select your preferred language': 'Selecciona tu idioma preferido',
+        'Selecciona tu idioma preferido': 'Selecciona tu idioma preferido',
+        'Choisissez votre thème préféré': 'Elige tu tema preferido',
+        'Choose your preferred theme': 'Elige tu tema preferido',
+        'Elige tu tema preferido': 'Elige tu tema preferido',
+        'Choisissez la devise à afficher': 'Elige la moneda a mostrar',
+        'Choose the currency to display': 'Elige la moneda a mostrar',
+        'Elige la moneda a mostrar': 'Elige la moneda a mostrar',
+        // Reset description
+        'Supprimer toutes les données et réinitialiser l\'application': 'Eliminar todos los datos y reiniciar la aplicación',
+        'Delete all data and reset the application': 'Eliminar todos los datos y reiniciar la aplicación',
+        'Eliminar todos los datos y reiniciar la aplicación': 'Eliminar todos los datos y reiniciar la aplicación',
+        // Category options
+        'Alimentation': 'Alimentación',
+        'Food': 'Alimentación',
+        'Alimentación': 'Alimentación',
+        'Loisirs': 'Ocio',
+        'Leisure': 'Ocio',
+        'Ocio': 'Ocio',
+        'Santé': 'Salud',
+        'Health': 'Salud',
+        'Salud': 'Salud',
+        'Transport': 'Transporte',
+        'Transporte': 'Transporte',
+        'Logement': 'Vivienda',
+        'Housing': 'Vivienda',
+        'Vivienda': 'Vivienda',
+        'Autres': 'Otros',
+        'Others': 'Otros',
+        'Otros': 'Otros',
+        // Pie chart legend
+        'Dépensé': 'Gastado',
+        'Spent': 'Gastado',
+        'Gastado': 'Gastado',
+        'Restant': 'Restante',
+        'Remaining': 'Restante',
+        'Restante': 'Restante'
     }
 };
 

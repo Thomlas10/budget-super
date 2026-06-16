@@ -59,6 +59,13 @@ body {
     position: sticky;
     top: 70px;
     z-index: 99;
+    transform: translateY(0);
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+}
+
+.navbar--hidden {
+    transform: translateY(-120%);
 }
 
 .nav-menu {
@@ -366,27 +373,28 @@ body {
 
 /* ===== BALANCE CARD ===== */
 .balance-card {
-    background: linear-gradient(135deg, #1E3A8A 0%, #1B6B7F 100%);
-    color: white;
+    background: linear-gradient(135deg, #1E3A8A 0%, #2D5A8C 100%);
+    color: #ffffff;
     padding: 2rem;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(13, 139, 139, 0.2);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
     margin-bottom: 2rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .balance-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(13, 139, 139, 0.3);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.35);
 }
 
 .balance-label {
     font-size: 0.95rem;
     font-weight: 600;
+    color: #ffffff;
     opacity: 0.9;
     margin-bottom: 0.5rem;
 }
@@ -394,23 +402,24 @@ body {
 .balance-amount {
     font-size: 2.2rem;
     font-weight: 700;
+    color: #ffffff;
     letter-spacing: -0.5px;
 }
 
 /* ===== RAPPORT PAGE STYLES ===== */
 .rapport-global-card {
-    background: linear-gradient(135deg, #1E3A8A 0%, #1B6B7F 100%);
-    color: white;
+    background: linear-gradient(135deg, #1E3A8A 0%, #2D5A8C 100%);
+    color: #ffffff;
     padding: 2rem;
     border-radius: 12px;
     margin-bottom: 3rem;
-    box-shadow: 0 4px 12px rgba(13, 139, 139, 0.2);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
 }
 
 .rapport-global-card h3 {
     font-size: 1.5rem;
     margin-bottom: 2rem;
-    color: white;
+    color: #ffffff;
 }
 
 .global-stats-row {
@@ -429,6 +438,7 @@ body {
 
 .stat-label {
     font-size: 0.85rem;
+    color: #ffffff;
     opacity: 0.9;
     margin-bottom: 0.5rem;
     font-weight: 600;
@@ -437,6 +447,7 @@ body {
 .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
+    color: #ffffff;
     letter-spacing: -0.5px;
 }
 
@@ -456,7 +467,7 @@ body {
 }
 
 .ratio-bar-expense {
-    background-color: #E74C3C;
+    background-color: #E11D48;
     height: 100%;
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     flex: 1;
@@ -467,12 +478,14 @@ body {
     gap: 2rem;
     justify-content: center;
     font-size: 0.9rem;
+    color: #ffffff;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: #ffffff;
 }
 
 .legend-box {
@@ -539,15 +552,17 @@ body {
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding-right: 8px;
+    justify-content: center;
+    min-width: 2.5rem;
+    overflow: hidden;
 }
 
 .progress-bar-fill .percentage-text {
     font-size: 0.75rem;
     font-weight: 700;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
 }
 
 .category-percentage {
@@ -575,6 +590,95 @@ body {
 .category-bar-item:nth-child(n+5) .progress-bar-fill {
     animation-delay: 400ms;
 }
+
+/* ===== PIE CHART (RAPPORT) ===== */
+.pie-chart-container {
+    margin-top: 2rem;
+}
+
+.pie-chart-visualization {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.pie-chart {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: conic-gradient(#E11D48 0deg 0deg, #047857 0deg 360deg);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    transition: background 0.6s ease;
+    position: relative;
+}
+
+.pie-slice-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    white-space: nowrap;
+    pointer-events: none;
+    transition: top 0.4s ease, left 0.4s ease, opacity 0.3s ease;
+}
+
+.pie-slice-label--hidden {
+    opacity: 0;
+}
+
+.pie-chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-width: 180px;
+}
+
+.pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.pie-legend-item *,
+.pie-legend-item strong,
+.pie-legend-item span {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.pie-legend-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.pie-legend-swatch--expenses {
+    background-color: #E11D48;
+}
+
+.pie-legend-swatch--remaining {
+    background-color: #047857;
+}
+
+.pie-legend-text {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    color: #ffffff;
+    font-weight: 700;
+}
+
 
 /* ===== GOALS PAGE STYLES ===== */
 .goals-section {
@@ -643,16 +747,18 @@ body {
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding-right: 8px;
+    justify-content: center;
+    min-width: 2.5rem;
+    overflow: hidden;
     width: 0%;
 }
 
 .goal-progress-bar-fill .goal-percentage {
     font-size: 0.75rem;
     font-weight: 700;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
 }
 
 .goal-delete-btn {
@@ -675,23 +781,24 @@ body {
 
 /* ===== SUBSCRIPTIONS PAGE STYLES ===== */
 .subscriptions-total-card {
-    background: linear-gradient(135deg, #2C3E50 0%, #8B5A7F 100%);
-    color: white;
+    background: linear-gradient(135deg, #1E3A8A 0%, #2D5A8C 100%);
+    color: #ffffff;
     padding: 2rem;
     border-radius: 12px;
     margin-bottom: 3rem;
-    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
     transition: box-shadow 0.3s ease;
     text-align: center;
 }
 
 .subscriptions-total-card:hover {
-    box-shadow: 0 6px 16px rgba(44, 62, 80, 0.3);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.35);
 }
 
 .total-label {
     font-size: 0.95rem;
     font-weight: 600;
+    color: #ffffff;
     opacity: 0.9;
     margin-bottom: 0.75rem;
 }
@@ -699,6 +806,7 @@ body {
 .total-amount {
     font-size: 2.5rem;
     font-weight: 700;
+    color: #ffffff;
     letter-spacing: -0.5px;
 }
 
@@ -1018,7 +1126,11 @@ body.dark-theme .expense-amount {
 }
 
 body.dark-theme .empty-message {
-    color: #a0aec0;
+    color: #cbd5e1;
+}
+
+body.dark-theme .subscriptions-section h3 {
+    color: #ffffff;
 }
 
 body.dark-theme .placeholder-text {
@@ -1041,11 +1153,12 @@ body.dark-theme .stat-item {
 }
 
 body.dark-theme .stat-label {
-    color: #a0aec0;
+    color: #ffffff;
+    opacity: 0.85;
 }
 
 body.dark-theme .stat-value {
-    color: #1E3A8A;
+    color: #ffffff;
 }
 
 body.dark-theme .ratio-bar-container {
@@ -1092,7 +1205,7 @@ body.dark-theme .goal-remaining {
 }
 
 body.dark-theme .goal-percentage {
-    color: white;
+    color: #ffffff;
     font-weight: 600;
 }
 
@@ -1118,21 +1231,22 @@ body.dark-theme .subscription-cost {
 }
 
 body.dark-theme .subscription-renewal {
-    color: #a0aec0;
+    color: #cbd5e1;
 }
 
 body.dark-theme .subscriptions-total-card {
     background: linear-gradient(135deg, #1E3A8A 0%, #2D5A8C 100%);
-    color: white;
+    color: #ffffff;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 }
 
 body.dark-theme .total-label {
-    color: #a0aec0;
+    color: #ffffff;
+    opacity: 0.85;
 }
 
 body.dark-theme .total-amount {
-    color: white;
+    color: #ffffff;
 }
 
 body.dark-theme .settings-card {
