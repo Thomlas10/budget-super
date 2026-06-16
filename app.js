@@ -1,3 +1,92 @@
+class IncomeApp {
+    constructor() {
+        this.incomes = this.loadIncomes();
+        this.form = document.getElementById('incomeForm');
+        this.incomeAmountInput = document.getElementById('incomeAmount');
+        this.incomeSourceInput = document.getElementById('incomeSource');
+        this.incomeDateInput = document.getElementById('incomeDate');
+        this.incomeList = document.getElementById('incomeList');
+
+        this.setupEventListeners();
+        this.setTodayDate();
+        this.render();
+    }
+
+    setupEventListeners() {
+        this.form.addEventListener('submit', (e) => this.handleAddIncome(e));
+    }
+
+    setTodayDate() {
+        const today = new Date().toISOString().split('T')[0];
+        this.incomeDateInput.value = today;
+    }
+
+    handleAddIncome(e) {
+        e.preventDefault();
+
+        const income = {
+            id: Date.now(),
+            amount: parseFloat(this.incomeAmountInput.value),
+            source: this.incomeSourceInput.value,
+            date: this.incomeDateInput.value
+        };
+
+        this.incomes.push(income);
+        this.saveIncomes();
+        this.form.reset();
+        this.setTodayDate();
+        this.render();
+
+        // Update Dashboard balance after income added
+        if (window.budgetApp) {
+            window.budgetApp.updateBalance();
+        }
+    }
+
+    saveIncomes() {
+        localStorage.setItem('incomes', JSON.stringify(this.incomes));
+    }
+
+    loadIncomes() {
+        const stored = localStorage.getItem('incomes');
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    getIncomeTotal() {
+        return this.incomes.reduce((sum, income) => sum + income.amount, 0);
+    }
+
+    renderIncomeList() {
+        if (this.incomes.length === 0) {
+            this.incomeList.innerHTML = '<p class="empty-message">Aucun revenu enregistré</p>';
+            return;
+        }
+
+        const sorted = [...this.incomes].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        this.incomeList.innerHTML = sorted
+            .map(income => `
+                <div class="expense-item">
+                    <div class="expense-info">
+                        <div class="expense-date">${this.formatDate(income.date)}</div>
+                        <div class="expense-category">${income.source}</div>
+                    </div>
+                    <div class="expense-amount">${income.amount.toFixed(2)}€</div>
+                </div>
+            `)
+            .join('');
+    }
+
+    formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('fr-FR', options);
+    }
+
+    render() {
+        this.renderIncomeList();
+    }
+}
+
 class Router {
     constructor() {
         this.currentPage = 'dashboard';
@@ -111,6 +200,7 @@ class BudgetApp {
 
         if (Object.keys(summary).length === 0) {
             this.categorySummary.innerHTML = '<p class="empty-message">Aucune dépense pour le moment</p>';
+            this.updateBalance();
             return;
         }
 
@@ -123,6 +213,8 @@ class BudgetApp {
                 </div>
             `)
             .join('');
+
+        this.updateBalance();
     }
 
     renderExpensesList() {
@@ -155,8 +247,33 @@ class BudgetApp {
         this.renderCategorySummary();
         this.renderExpensesList();
     }
+
+    getBalance() {
+        const expenseTotal = this.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+        const incomeTotal = window.incomeApp ? window.incomeApp.getIncomeTotal() : 0;
+        return incomeTotal - expenseTotal;
+    }
+
+    updateBalance() {
+        const balanceElement = document.getElementById('balanceAmount');
+        if (balanceElement) {
+            const balance = this.getBalance();
+            balanceElement.textContent = balance.toFixed(2) + '€';
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new BudgetApp();
+    const budgetApp = new BudgetApp();
+    const incomeApp = new IncomeApp();
+
+    // Store references globally so they can access each other
+    window.budgetApp = budgetApp;
+    window.incomeApp = incomeApp;
+
+    // Initialize Router after both apps are ready
+    new Router();
+
+    // Set initial balance
+    budgetApp.updateBalance();
 });

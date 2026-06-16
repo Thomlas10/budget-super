@@ -35,6 +35,10 @@
 
                 <div class="summary">
                     <h3>Résumé par catégorie</h3>
+                    <div class="balance-card">
+                        <div class="balance-label">Solde Actuel</div>
+                        <div class="balance-amount" id="balanceAmount">0.00€</div>
+                    </div>
                     <div id="categorySummary" class="category-summary"></div>
                 </div>
 
@@ -73,11 +77,37 @@
             </div>
         </section>
 
-        <!-- My Income Section (Placeholder) -->
+        <!-- My Income Section -->
         <section id="income" class="page">
             <div class="container">
                 <h2>My Income</h2>
-                <p class="placeholder-text">Placeholder for income tracking feature</p>
+
+                <div class="form-section">
+                    <h3>Ajouter un revenu</h3>
+                    <form id="incomeForm">
+                        <div class="form-group">
+                            <label for="incomeAmount">Montant (€)</label>
+                            <input type="number" id="incomeAmount" placeholder="0.00" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="incomeSource">Source</label>
+                            <input type="text" id="incomeSource" placeholder="e.g., Salary, Freelance" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="incomeDate">Date</label>
+                            <input type="date" id="incomeDate" required>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Ajouter</button>
+                    </form>
+                </div>
+
+                <div class="expenses-section">
+                    <h3>Historique des revenus</h3>
+                    <div id="incomeList" class="expenses-list"></div>
+                </div>
             </div>
         </section>
 
