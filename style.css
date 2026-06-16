@@ -750,6 +750,92 @@ body {
     color: white;
 }
 
+/* ===== SETTINGS PAGE STYLES ===== */
+.settings-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.settings-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+    color: #333;
+}
+
+.settings-description {
+    color: #999;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.currency-preference-card {
+    border-left: 4px solid #0D8B8B;
+}
+
+.currency-preference-card #currencySelect {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e6ed;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%230D8B8B' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+}
+
+.currency-preference-card #currencySelect:hover {
+    border-color: #0D8B8B;
+    background-color: #f8fffe;
+}
+
+.currency-preference-card #currencySelect:focus {
+    outline: none;
+    border-color: #0D8B8B;
+    box-shadow: 0 0 0 3px rgba(13, 139, 139, 0.15);
+}
+
+.danger-zone-card {
+    border: 3px solid #e74c3c;
+}
+
+.danger-zone-card h3 {
+    color: #e74c3c;
+}
+
+.reset-button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.reset-button:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(231, 76, 60, 0.3);
+}
+
+.reset-button:active {
+    transform: translateY(0);
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .header-content {

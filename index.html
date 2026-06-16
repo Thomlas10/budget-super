@@ -46,7 +46,7 @@
                     <h3>Ajouter une dépense</h3>
                     <form id="expenseForm">
                         <div class="form-group">
-                            <label for="amount">Montant (€)</label>
+                            <label for="amount">Montant <span class="currency-unit">(€)</span></label>
                             <input type="number" id="amount" placeholder="0.00" step="0.01" required>
                         </div>
 
@@ -86,7 +86,7 @@
                     <h3>Ajouter un revenu</h3>
                     <form id="incomeForm">
                         <div class="form-group">
-                            <label for="incomeAmount">Montant (€)</label>
+                            <label for="incomeAmount">Montant <span class="currency-unit">(€)</span></label>
                             <input type="number" id="incomeAmount" placeholder="0.00" step="0.01" required>
                         </div>
 
@@ -165,12 +165,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="goalTarget">Montant Cible (€)</label>
+                            <label for="goalTarget">Montant Cible <span class="currency-unit">(€)</span></label>
                             <input type="number" id="goalTarget" placeholder="0.00" step="0.01" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="goalCurrent">Montant Épargné (€)</label>
+                            <label for="goalCurrent">Montant Épargné <span class="currency-unit">(€)</span></label>
                             <input type="number" id="goalCurrent" placeholder="0.00" step="0.01" value="0.00" required>
                         </div>
 
@@ -205,7 +205,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="subscriptionCost">Coût Mensuel (€)</label>
+                            <label for="subscriptionCost">Coût Mensuel <span class="currency-unit">(€)</span></label>
                             <input type="number" id="subscriptionCost" placeholder="0.00" step="0.01" required>
                         </div>
 
@@ -225,11 +225,30 @@
             </div>
         </section>
 
-        <!-- Settings Section (Placeholder) -->
+        <!-- Settings Section -->
         <section id="settings" class="page">
             <div class="container">
-                <h2>Settings</h2>
-                <p class="placeholder-text">Placeholder for settings feature</p>
+                <h2>Paramètres</h2>
+
+                <!-- Currency Preference Card -->
+                <div class="settings-card currency-preference-card">
+                    <h3>Préférence de Devise</h3>
+                    <p class="settings-description">Choisissez la devise à afficher dans toute l'application</p>
+                    <div class="form-group">
+                        <label for="currencySelect">Devise</label>
+                        <select id="currencySelect">
+                            <option value="EUR">Euro (€)</option>
+                            <option value="USD">Dollar ($)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Danger Zone Card -->
+                <div class="settings-card danger-zone-card">
+                    <h3>Zone de Danger</h3>
+                    <p class="settings-description">Les actions dans cette section sont irréversibles</p>
+                    <button id="resetButton" class="reset-button">Réinitialiser l'application</button>
+                </div>
             </div>
         </section>
     </main>

@@ -1,3 +1,51 @@
+class CurrencyManager {
+    constructor() {
+        this.currency = this.loadCurrency();
+        this.listeners = [];
+        this.EUR_TO_USD = 1.10;
+    }
+
+    loadCurrency() {
+        const saved = localStorage.getItem('app_currency');
+        return saved === 'USD' ? 'USD' : 'EUR';
+    }
+
+    getCurrency() {
+        return this.currency;
+    }
+
+    getSymbol() {
+        return this.currency === 'USD' ? '$' : '€';
+    }
+
+    format(amount) {
+        if (this.currency === 'USD') {
+            const convertedAmount = amount * this.EUR_TO_USD;
+            return convertedAmount.toFixed(2).replace('.', '.') + '$';
+        } else {
+            return amount.toFixed(2).replace('.', ',') + '€';
+        }
+    }
+
+    setCurrency(code) {
+        if (code !== 'EUR' && code !== 'USD') return;
+        this.currency = code;
+        localStorage.setItem('app_currency', code);
+        this.notifyListeners();
+    }
+
+    onCurrencyChange(callback) {
+        this.listeners.push(callback);
+    }
+
+    notifyListeners() {
+        this.listeners.forEach(callback => callback(this.currency));
+    }
+}
+
+// Create global instance
+const currencyManager = new CurrencyManager();
+
 class IncomeApp {
     constructor() {
         this.incomes = this.loadIncomes();
@@ -10,10 +58,15 @@ class IncomeApp {
         this.setupEventListeners();
         this.setTodayDate();
         this.render();
+        currencyManager.onCurrencyChange((currency) => this.onCurrencyChange(currency));
     }
 
     setupEventListeners() {
         this.form.addEventListener('submit', (e) => this.handleAddIncome(e));
+    }
+
+    onCurrencyChange(newCurrency) {
+        this.render();
     }
 
     setTodayDate() {
@@ -71,7 +124,7 @@ class IncomeApp {
                         <div class="expense-date">${this.formatDate(income.date)}</div>
                         <div class="expense-category">${income.source}</div>
                     </div>
-                    <div class="expense-amount">${income.amount.toFixed(2)}€</div>
+                    <div class="expense-amount">${currencyManager.format(income.amount)}</div>
                 </div>
             `)
             .join('');
@@ -97,6 +150,7 @@ class RapportApp {
         this.categoryBarsContainer = document.getElementById('categoryBarsContainer');
 
         this.render();
+        currencyManager.onCurrencyChange((currency) => this.onCurrencyChange(currency));
     }
 
     getCategoryColor(category) {
@@ -154,7 +208,7 @@ class RapportApp {
     }
 
     formatCurrency(amount) {
-        return amount.toFixed(2).replace('.', ',') + '€';
+        return currencyManager.format(amount);
     }
 
     renderGlobalCard() {
@@ -209,6 +263,10 @@ class RapportApp {
         this.renderGlobalCard();
         this.renderCategoryBars();
     }
+
+    onCurrencyChange(newCurrency) {
+        this.render();
+    }
 }
 
 class GoalsApp {
@@ -222,6 +280,7 @@ class GoalsApp {
 
         this.setupEventListeners();
         this.render();
+        currencyManager.onCurrencyChange((currency) => this.onCurrencyChange(currency));
     }
 
     setupEventListeners() {
@@ -269,7 +328,7 @@ class GoalsApp {
     }
 
     formatCurrency(amount) {
-        return amount.toFixed(2).replace('.', ',') + '€';
+        return currencyManager.format(amount);
     }
 
     deleteGoal(id) {
@@ -321,6 +380,10 @@ class GoalsApp {
     render() {
         this.renderGoals();
     }
+
+    onCurrencyChange(newCurrency) {
+        this.render();
+    }
 }
 
 class SubscriptionsApp {
@@ -335,6 +398,7 @@ class SubscriptionsApp {
 
         this.setupEventListeners();
         this.render();
+        currencyManager.onCurrencyChange((currency) => this.onCurrencyChange(currency));
     }
 
     setupEventListeners() {
@@ -372,7 +436,7 @@ class SubscriptionsApp {
     }
 
     formatCurrency(amount) {
-        return amount.toFixed(2).replace('.', ',') + '€';
+        return currencyManager.format(amount);
     }
 
     deleteSubscription(id) {
@@ -410,12 +474,53 @@ class SubscriptionsApp {
         this.renderMonthlyTotal();
         this.renderSubscriptions();
     }
+
+    onCurrencyChange(newCurrency) {
+        this.render();
+    }
+}
+
+class SettingsApp {
+    constructor() {
+        this.currencySelect = document.getElementById('currencySelect');
+        this.resetButton = document.getElementById('resetButton');
+
+        this.setupEventListeners();
+        this.initializeCurrencySelect();
+    }
+
+    initializeCurrencySelect() {
+        const currentCurrency = currencyManager.getCurrency();
+        this.currencySelect.value = currentCurrency;
+    }
+
+    setupEventListeners() {
+        if (this.currencySelect) {
+            this.currencySelect.addEventListener('change', (e) => {
+                localStorage.setItem('app_currency', e.target.value);
+                localStorage.setItem('current_page', 'settings');
+                location.reload();
+            });
+        }
+        this.resetButton.addEventListener('click', (e) => this.handleReset(e));
+    }
+
+    handleReset(e) {
+        e.preventDefault();
+        const confirmed = confirm('Voulez-vous vraiment réinitialiser toutes vos données ?');
+        if (confirmed) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
 }
 
 class Router {
     constructor() {
-        this.currentPage = 'dashboard';
+        const savedPage = localStorage.getItem('current_page');
+        this.currentPage = savedPage || 'dashboard';
         this.setupEventListeners();
+        this.navigateTo(this.currentPage);
     }
 
     setupEventListeners() {
@@ -453,6 +558,7 @@ class Router {
         }
 
         this.currentPage = page;
+        localStorage.setItem('current_page', page);
     }
 }
 
@@ -469,6 +575,7 @@ class BudgetApp {
         this.setupEventListeners();
         this.setTodayDate();
         this.render();
+        currencyManager.onCurrencyChange((currency) => this.onCurrencyChange(currency));
 
         // Initialize Router after BudgetApp is ready
         this.router = new Router();
@@ -534,7 +641,7 @@ class BudgetApp {
             .map(([category, total]) => `
                 <div class="category-item">
                     <div class="category-name">${category}</div>
-                    <div class="category-total">${total.toFixed(2)}€</div>
+                    <div class="category-total">${currencyManager.format(total)}</div>
                 </div>
             `)
             .join('');
@@ -557,7 +664,7 @@ class BudgetApp {
                         <div class="expense-date">${this.formatDate(expense.date)}</div>
                         <div class="expense-category">${expense.category}</div>
                     </div>
-                    <div class="expense-amount">${expense.amount.toFixed(2)}€</div>
+                    <div class="expense-amount">${currencyManager.format(expense.amount)}</div>
                 </div>
             `)
             .join('');
@@ -583,7 +690,30 @@ class BudgetApp {
         const balanceElement = document.getElementById('balanceAmount');
         if (balanceElement) {
             const balance = this.getBalance();
-            balanceElement.textContent = balance.toFixed(2) + '€';
+            balanceElement.textContent = currencyManager.format(balance);
+        }
+    }
+
+    onCurrencyChange(newCurrency) {
+        this.render();
+        this.updateBalance();
+    }
+}
+
+function updateCurrencyLabels() {
+    const currentSymbol = currencyManager.getSymbol();
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+
+    let node;
+    while (node = walker.nextNode()) {
+        const text = node.textContent;
+        if (text.includes('(€)') || text.includes('($)')) {
+            node.textContent = text.replace(/\([€$]\)/g, `(${currentSymbol})`);
         }
     }
 }
@@ -594,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rapportApp = new RapportApp();
     const goalsApp = new GoalsApp();
     const subscriptionsApp = new SubscriptionsApp();
+    const settingsApp = new SettingsApp();
 
     // Store references globally so they can access each other
     window.budgetApp = budgetApp;
@@ -601,6 +732,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.rapportApp = rapportApp;
     window.goalsApp = goalsApp;
     window.subscriptionsApp = subscriptionsApp;
+    window.settingsApp = settingsApp;
+
+    // Update all currency labels to match current currency
+    updateCurrencyLabels();
 
     // Initialize Router after all apps are ready
     new Router();
