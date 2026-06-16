@@ -654,6 +654,102 @@ body {
     color: white;
 }
 
+/* ===== SUBSCRIPTIONS PAGE STYLES ===== */
+.subscriptions-total-card {
+    background: linear-gradient(135deg, #2C3E50 0%, #8B5A7F 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+    transition: box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.subscriptions-total-card:hover {
+    box-shadow: 0 6px 16px rgba(44, 62, 80, 0.3);
+}
+
+.total-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 0.75rem;
+}
+
+.total-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.subscriptions-section {
+    margin-top: 3rem;
+}
+
+.subscriptions-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.subscriptions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.subscription-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #2C3E50;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.subscription-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.subscription-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.subscription-cost {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+}
+
+.subscription-renewal {
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 1rem;
+}
+
+.subscription-delete-btn {
+    background-color: #f0f0f0;
+    color: #e74c3c;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.subscription-delete-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .header-content {

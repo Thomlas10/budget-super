@@ -323,6 +323,95 @@ class GoalsApp {
     }
 }
 
+class SubscriptionsApp {
+    constructor() {
+        this.subscriptions = this.loadSubscriptions();
+        this.form = document.getElementById('subscriptionsForm');
+        this.subscriptionNameInput = document.getElementById('subscriptionName');
+        this.subscriptionCostInput = document.getElementById('subscriptionCost');
+        this.subscriptionRenewalDayInput = document.getElementById('subscriptionRenewalDay');
+        this.subscriptionsList = document.getElementById('subscriptionsList');
+        this.monthlyTotalElement = document.getElementById('monthlyTotal');
+
+        this.setupEventListeners();
+        this.render();
+    }
+
+    setupEventListeners() {
+        this.form.addEventListener('submit', (e) => this.handleAddSubscription(e));
+    }
+
+    handleAddSubscription(e) {
+        e.preventDefault();
+
+        const subscription = {
+            id: Date.now(),
+            name: this.subscriptionNameInput.value,
+            monthlyCost: parseFloat(this.subscriptionCostInput.value),
+            renewalDay: parseInt(this.subscriptionRenewalDayInput.value),
+            createdDate: new Date().toISOString().split('T')[0]
+        };
+
+        this.subscriptions.push(subscription);
+        this.saveSubscriptions();
+        this.form.reset();
+        this.render();
+    }
+
+    saveSubscriptions() {
+        localStorage.setItem('monthly_subscriptions', JSON.stringify(this.subscriptions));
+    }
+
+    loadSubscriptions() {
+        const stored = localStorage.getItem('monthly_subscriptions');
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    calculateMonthlyTotal() {
+        return this.subscriptions.reduce((sum, sub) => sum + sub.monthlyCost, 0);
+    }
+
+    formatCurrency(amount) {
+        return amount.toFixed(2).replace('.', ',') + '€';
+    }
+
+    deleteSubscription(id) {
+        this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
+        this.saveSubscriptions();
+        this.render();
+    }
+
+    renderMonthlyTotal() {
+        const total = this.calculateMonthlyTotal();
+        this.monthlyTotalElement.textContent = this.formatCurrency(total) + ' / mois';
+    }
+
+    renderSubscriptions() {
+        if (this.subscriptions.length === 0) {
+            this.subscriptionsList.innerHTML = '<p class="empty-message">Aucun abonnement enregistré</p>';
+            return;
+        }
+
+        const sorted = [...this.subscriptions].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+
+        this.subscriptionsList.innerHTML = sorted
+            .map(sub => `
+                <div class="subscription-card">
+                    <div class="subscription-name">${sub.name}</div>
+                    <div class="subscription-cost">${this.formatCurrency(sub.monthlyCost)} / mois</div>
+                    <div class="subscription-renewal">Renouvelé le ${sub.renewalDay} de chaque mois</div>
+                    <button class="subscription-delete-btn" onclick="window.subscriptionsApp.deleteSubscription(${sub.id})">Supprimer</button>
+                </div>
+            `)
+            .join('');
+    }
+
+    render() {
+        this.renderMonthlyTotal();
+        this.renderSubscriptions();
+    }
+}
+
 class Router {
     constructor() {
         this.currentPage = 'dashboard';
@@ -504,12 +593,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const incomeApp = new IncomeApp();
     const rapportApp = new RapportApp();
     const goalsApp = new GoalsApp();
+    const subscriptionsApp = new SubscriptionsApp();
 
     // Store references globally so they can access each other
     window.budgetApp = budgetApp;
     window.incomeApp = incomeApp;
     window.rapportApp = rapportApp;
     window.goalsApp = goalsApp;
+    window.subscriptionsApp = subscriptionsApp;
 
     // Initialize Router after all apps are ready
     new Router();
