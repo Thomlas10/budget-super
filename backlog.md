@@ -1,15 +1,15 @@
 # Budget App - Backlog
 
-## User Story 1: Ajouter une dépense
+## User Story 1: Ajouter une dépense ✅ COMPLÉTÉE
 **En tant que** utilisateur,
 **Je veux** pouvoir ajouter une dépense avec un montant, une catégorie et une date,
 **Afin que** je puisse suivre mes dépenses au fil du temps.
 
 **Critères d'acceptation:**
-- Un formulaire pour entrer le montant
-- Un sélecteur de catégorie (Alimentation, Transport, Divertissement, Autre)
-- La date est automatiquement définie à aujourd'hui
-- Le bouton "Ajouter" crée l'entrée
+- [x] Un formulaire pour entrer le montant
+- [x] Un sélecteur de catégorie (Alimentation, Transport, Divertissement, Autre)
+- [x] La date est automatiquement définie à aujourd'hui
+- [x] Le bouton "Ajouter" crée l'entrée
 
 ## User Story 2: Afficher la liste des dépenses
 **En tant que** utilisateur,
