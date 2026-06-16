@@ -378,6 +378,185 @@ body {
     letter-spacing: -0.5px;
 }
 
+/* ===== RAPPORT PAGE STYLES ===== */
+.rapport-global-card {
+    background: linear-gradient(135deg, #0D8B8B 0%, #1B6B7F 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 12px rgba(13, 139, 139, 0.2);
+}
+
+.rapport-global-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.global-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.ratio-bar-container {
+    display: flex;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.ratio-bar-income {
+    background-color: #0D8B8B;
+    height: 100%;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ratio-bar-expense {
+    background-color: #E74C3C;
+    height: 100%;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1;
+}
+
+.ratio-bar-legend {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.category-bars-section {
+    margin-top: 3rem;
+}
+
+.category-bars-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.category-bars-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.category-bar-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.category-bar-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.category-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.category-amount {
+    color: #333;
+    font-weight: 700;
+}
+
+.progress-bar-container {
+    background-color: #f0f0f0;
+    height: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 12px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+}
+
+.progress-bar-fill .percentage-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.category-percentage {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Staggered animation delays for category bars */
+.category-bar-item:nth-child(1) .progress-bar-fill {
+    animation-delay: 0ms;
+}
+
+.category-bar-item:nth-child(2) .progress-bar-fill {
+    animation-delay: 100ms;
+}
+
+.category-bar-item:nth-child(3) .progress-bar-fill {
+    animation-delay: 200ms;
+}
+
+.category-bar-item:nth-child(4) .progress-bar-fill {
+    animation-delay: 300ms;
+}
+
+.category-bar-item:nth-child(n+5) .progress-bar-fill {
+    animation-delay: 400ms;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .header-content {

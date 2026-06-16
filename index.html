@@ -111,11 +111,43 @@
             </div>
         </section>
 
-        <!-- Rapport Section (Placeholder) -->
+        <!-- Rapport Section -->
         <section id="rapport" class="page">
             <div class="container">
                 <h2>Rapport</h2>
-                <p class="placeholder-text">Placeholder for reports feature</p>
+
+                <!-- Global Breakdown Card -->
+                <div class="rapport-global-card">
+                    <h3>Aperçu Global</h3>
+                    <div class="global-stats-row">
+                        <div class="stat-item">
+                            <div class="stat-label">Revenus Totaux</div>
+                            <div class="stat-value" id="globalIncome">0.00€</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Dépenses Totales</div>
+                            <div class="stat-value" id="globalExpenses">0.00€</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Solde</div>
+                            <div class="stat-value" id="globalBalance">0.00€</div>
+                        </div>
+                    </div>
+                    <div class="ratio-bar-container">
+                        <div class="ratio-bar-income" id="ratioBarIncome" style="width: 0%"></div>
+                        <div class="ratio-bar-expense" id="ratioBarExpense" style="width: 0%"></div>
+                    </div>
+                    <div class="ratio-bar-legend">
+                        <div class="legend-item"><span class="legend-box" style="background-color: #0D8B8B;"></span>Revenus</div>
+                        <div class="legend-item"><span class="legend-box" style="background-color: #E74C3C;"></span>Dépenses</div>
+                    </div>
+                </div>
+
+                <!-- Category Ranking Section -->
+                <div class="category-bars-section">
+                    <h3>Dépenses par Catégorie</h3>
+                    <div id="categoryBarsContainer" class="category-bars-list"></div>
+                </div>
             </div>
         </section>
 

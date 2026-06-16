@@ -87,6 +87,130 @@ class IncomeApp {
     }
 }
 
+class RapportApp {
+    constructor() {
+        this.globalIncomeElement = document.getElementById('globalIncome');
+        this.globalExpensesElement = document.getElementById('globalExpenses');
+        this.globalBalanceElement = document.getElementById('globalBalance');
+        this.ratioBarIncomeElement = document.getElementById('ratioBarIncome');
+        this.ratioBarExpenseElement = document.getElementById('ratioBarExpense');
+        this.categoryBarsContainer = document.getElementById('categoryBarsContainer');
+
+        this.render();
+    }
+
+    getCategoryColor(category) {
+        const colors = {
+            'Alimentation': '#0D8B8B',
+            'Transport': '#2C5F7F',
+            'Divertissement': '#7B4A9F',
+            'Autre': '#6B7D8B'
+        };
+        return colors[category] || '#6B7D8B';
+    }
+
+    calculateGlobalStats() {
+        const expenses = window.budgetApp ? window.budgetApp.expenses : [];
+        const incomeApp = window.incomeApp;
+
+        const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+        const totalIncome = incomeApp ? incomeApp.getIncomeTotal() : 0;
+        const balance = totalIncome - totalExpenses;
+
+        const total = totalIncome + totalExpenses;
+        const incomePercentage = total > 0 ? (totalIncome / total) * 100 : 0;
+        const expensePercentage = total > 0 ? (totalExpenses / total) * 100 : 0;
+
+        return {
+            totalIncome,
+            totalExpenses,
+            balance,
+            incomePercentage,
+            expensePercentage
+        };
+    }
+
+    calculateCategoryStats() {
+        const expenses = window.budgetApp ? window.budgetApp.expenses : [];
+        const categoryTotals = {};
+
+        expenses.forEach(expense => {
+            if (!categoryTotals[expense.category]) {
+                categoryTotals[expense.category] = 0;
+            }
+            categoryTotals[expense.category] += expense.amount;
+        });
+
+        const totalExpenses = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+
+        return Object.entries(categoryTotals)
+            .map(([category, amount]) => ({
+                category,
+                amount,
+                percentage: totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0,
+                color: this.getCategoryColor(category)
+            }))
+            .sort((a, b) => b.amount - a.amount);
+    }
+
+    formatCurrency(amount) {
+        return amount.toFixed(2).replace('.', ',') + '€';
+    }
+
+    renderGlobalCard() {
+        const stats = this.calculateGlobalStats();
+
+        this.globalIncomeElement.textContent = this.formatCurrency(stats.totalIncome);
+        this.globalExpensesElement.textContent = this.formatCurrency(stats.totalExpenses);
+        this.globalBalanceElement.textContent = this.formatCurrency(stats.balance);
+
+        this.ratioBarIncomeElement.style.width = stats.incomePercentage + '%';
+        this.ratioBarExpenseElement.style.width = stats.expensePercentage + '%';
+    }
+
+    renderCategoryBars() {
+        const categories = this.calculateCategoryStats();
+
+        if (categories.length === 0) {
+            this.categoryBarsContainer.innerHTML = '<p class="empty-message">Aucune dépense enregistrée</p>';
+            return;
+        }
+
+        this.categoryBarsContainer.innerHTML = categories
+            .map(cat => `
+                <div class="category-bar-item">
+                    <div class="category-label">
+                        <span>${cat.category}</span>
+                        <span class="category-amount">${this.formatCurrency(cat.amount)}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 0%; background-color: ${cat.color};">
+                            <span class="percentage-text">${cat.percentage.toFixed(0)}%</span>
+                        </div>
+                    </div>
+                    <div class="category-percentage">${cat.percentage.toFixed(1)}% du budget</div>
+                </div>
+            `)
+            .join('');
+
+        // Trigger animations by setting width after render
+        setTimeout(() => {
+            const fills = this.categoryBarsContainer.querySelectorAll('.progress-bar-fill');
+            const categoryStats = this.calculateCategoryStats();
+            fills.forEach((fill, index) => {
+                if (categoryStats[index]) {
+                    fill.style.width = categoryStats[index].percentage + '%';
+                }
+            });
+        }, 10);
+    }
+
+    render() {
+        this.renderGlobalCard();
+        this.renderCategoryBars();
+    }
+}
+
 class Router {
     constructor() {
         this.currentPage = 'dashboard';
@@ -266,12 +390,14 @@ class BudgetApp {
 document.addEventListener('DOMContentLoaded', () => {
     const budgetApp = new BudgetApp();
     const incomeApp = new IncomeApp();
+    const rapportApp = new RapportApp();
 
     // Store references globally so they can access each other
     window.budgetApp = budgetApp;
     window.incomeApp = incomeApp;
+    window.rapportApp = rapportApp;
 
-    // Initialize Router after both apps are ready
+    // Initialize Router after all apps are ready
     new Router();
 
     // Set initial balance
