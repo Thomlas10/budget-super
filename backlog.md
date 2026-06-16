@@ -21,12 +21,12 @@
 - [x] Chaque ligne affiche: date, catégorie, montant
 - [x] La liste se met à jour quand j'ajoute une nouvelle dépense
 
-## User Story 3: Voir le total des dépenses par catégorie
+## User Story 3: Voir le total des dépenses par catégorie ✅ COMPLÉTÉE
 **En tant que** utilisateur,
 **Je veux** voir un résumé des dépenses totales par catégorie,
 **Afin que** je puisse identifier où va mon argent.
 
 **Critères d'acceptation:**
-- Un résumé affiche chaque catégorie avec le total des dépenses
-- Le résumé se met à jour automatiquement
-- Les totaux sont affichés clairement en haut de la page
+- [x] Un résumé affiche chaque catégorie avec le total des dépenses
+- [x] Le résumé se met à jour automatiquement
+- [x] Les totaux sont affichés clairement en haut de la page
