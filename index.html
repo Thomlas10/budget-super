@@ -17,12 +17,12 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <ul class="nav-menu">
-            <li><button class="nav-link active" data-page="dashboard">Dashboard</button></li>
-            <li><button class="nav-link" data-page="income">My Income</button></li>
-            <li><button class="nav-link" data-page="rapport">Rapport</button></li>
-            <li><button class="nav-link" data-page="goals">My Goals</button></li>
-            <li><button class="nav-link" data-page="subscriptions">Subscriptions</button></li>
-            <li><button class="nav-link" data-page="settings">Settings</button></li>
+            <li><button class="nav-link active" data-page="dashboard" data-i18n="nav_dashboard">Dashboard</button></li>
+            <li><button class="nav-link" data-page="income" data-i18n="nav_income">My Income</button></li>
+            <li><button class="nav-link" data-page="rapport" data-i18n="nav_rapport">Rapport</button></li>
+            <li><button class="nav-link" data-page="goals" data-i18n="nav_goals">My Goals</button></li>
+            <li><button class="nav-link" data-page="subscriptions" data-i18n="nav_subscriptions">Subscriptions</button></li>
+            <li><button class="nav-link" data-page="settings" data-i18n="nav_settings">Settings</button></li>
         </ul>
     </nav>
 
@@ -228,14 +228,42 @@
         <!-- Settings Section -->
         <section id="settings" class="page">
             <div class="container">
-                <h2>Paramètres</h2>
+                <h2 data-i18n="settings_title">Paramètres</h2>
 
-                <!-- Currency Preference Card -->
-                <div class="settings-card currency-preference-card">
-                    <h3>Préférence de Devise</h3>
-                    <p class="settings-description">Choisissez la devise à afficher dans toute l'application</p>
+                <!-- Language Selection Card -->
+                <div class="settings-card">
+                    <h3 data-i18n="language_label">Langue</h3>
+                    <p class="settings-description" data-i18n="language_description">Sélectionnez votre langue préférée</p>
                     <div class="form-group">
-                        <label for="currencySelect">Devise</label>
+                        <label for="languageSelect" data-i18n="language_select_label">Langue</label>
+                        <select id="languageSelect">
+                            <option value="fr" data-i18n="lang_french">Français</option>
+                            <option value="en" data-i18n="lang_english">Anglais</option>
+                            <option value="es" data-i18n="lang_spanish">Espagnol</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Theme Selection Card -->
+                <div class="settings-card">
+                    <h3 data-i18n="theme_label">Thème d'affichage</h3>
+                    <p class="settings-description" data-i18n="theme_description">Choisissez votre thème préféré</p>
+                    <div class="form-group">
+                        <label for="themeSelect" data-i18n="theme_select_label">Thème</label>
+                        <select id="themeSelect">
+                            <option value="light" data-i18n="theme_light">Mode Clair</option>
+                            <option value="dark" data-i18n="theme_dark">Mode Sombre</option>
+                            <option value="system" data-i18n="theme_system">Thème Système</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Currency Selection Card -->
+                <div class="settings-card">
+                    <h3 data-i18n="currency_label">Devise</h3>
+                    <p class="settings-description" data-i18n="currency_description">Choisissez la devise à afficher</p>
+                    <div class="form-group">
+                        <label for="currencySelect" data-i18n="currency_select_label">Devise</label>
                         <select id="currencySelect">
                             <option value="EUR">Euro (€)</option>
                             <option value="USD">Dollar ($)</option>
@@ -243,11 +271,11 @@
                     </div>
                 </div>
 
-                <!-- Danger Zone Card -->
-                <div class="settings-card danger-zone-card">
-                    <h3>Zone de Danger</h3>
-                    <p class="settings-description">Les actions dans cette section sont irréversibles</p>
-                    <button id="resetButton" class="reset-button">Réinitialiser l'application</button>
+                <!-- Reset Application Card -->
+                <div class="settings-card settings-reset-card">
+                    <h3 data-i18n="reset_label">Réinitialisation</h3>
+                    <p class="settings-description" data-i18n="reset_description">Supprimer toutes les données et réinitialiser l'application</p>
+                    <button id="resetAppBtn" class="reset-app-button" data-i18n="reset_button">Réinitialiser l'application</button>
                 </div>
             </div>
         </section>
