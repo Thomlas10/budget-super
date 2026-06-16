@@ -7,47 +7,112 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>📊 Mon Budget</h1>
-
-        <div class="summary">
-            <h2>Résumé par catégorie</h2>
-            <div id="categorySummary" class="category-summary"></div>
+    <!-- Fixed Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">💰 Budget-Super</h1>
         </div>
+    </header>
 
-        <div class="form-section">
-            <h2>Ajouter une dépense</h2>
-            <form id="expenseForm">
-                <div class="form-group">
-                    <label for="amount">Montant (€)</label>
-                    <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <ul class="nav-menu">
+            <li><button class="nav-link active" data-page="dashboard">Dashboard</button></li>
+            <li><button class="nav-link" data-page="income">My Income</button></li>
+            <li><button class="nav-link" data-page="rapport">Rapport</button></li>
+            <li><button class="nav-link" data-page="goals">My Goals</button></li>
+            <li><button class="nav-link" data-page="subscriptions">Subscriptions</button></li>
+            <li><button class="nav-link" data-page="settings">Settings</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <!-- Dashboard Section (moved existing content here) -->
+        <section id="dashboard" class="page active">
+            <div class="container">
+                <h2>Dashboard</h2>
+
+                <div class="summary">
+                    <h3>Résumé par catégorie</h3>
+                    <div id="categorySummary" class="category-summary"></div>
                 </div>
 
-                <div class="form-group">
-                    <label for="category">Catégorie</label>
-                    <select id="category" required>
-                        <option value="">Sélectionner une catégorie</option>
-                        <option value="Alimentation">Alimentation</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Divertissement">Divertissement</option>
-                        <option value="Autre">Autre</option>
-                    </select>
+                <div class="form-section">
+                    <h3>Ajouter une dépense</h3>
+                    <form id="expenseForm">
+                        <div class="form-group">
+                            <label for="amount">Montant (€)</label>
+                            <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Catégorie</label>
+                            <select id="category" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="Alimentation">Alimentation</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Divertissement">Divertissement</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Ajouter</button>
+                    </form>
                 </div>
 
-                <div class="form-group">
-                    <label for="date">Date</label>
-                    <input type="date" id="date" required>
+                <div class="expenses-section">
+                    <h3>Historique des dépenses</h3>
+                    <div id="expensesList" class="expenses-list"></div>
                 </div>
+            </div>
+        </section>
 
-                <button type="submit" class="btn-submit">Ajouter</button>
-            </form>
-        </div>
+        <!-- My Income Section (Placeholder) -->
+        <section id="income" class="page">
+            <div class="container">
+                <h2>My Income</h2>
+                <p class="placeholder-text">Placeholder for income tracking feature</p>
+            </div>
+        </section>
 
-        <div class="expenses-section">
-            <h2>Historique des dépenses</h2>
-            <div id="expensesList" class="expenses-list"></div>
-        </div>
-    </div>
+        <!-- Rapport Section (Placeholder) -->
+        <section id="rapport" class="page">
+            <div class="container">
+                <h2>Rapport</h2>
+                <p class="placeholder-text">Placeholder for reports feature</p>
+            </div>
+        </section>
+
+        <!-- My Goals Section (Placeholder) -->
+        <section id="goals" class="page">
+            <div class="container">
+                <h2>My Goals</h2>
+                <p class="placeholder-text">Placeholder for goals tracking feature</p>
+            </div>
+        </section>
+
+        <!-- Subscriptions Section (Placeholder) -->
+        <section id="subscriptions" class="page">
+            <div class="container">
+                <h2>Subscriptions</h2>
+                <p class="placeholder-text">Placeholder for subscriptions feature</p>
+            </div>
+        </section>
+
+        <!-- Settings Section (Placeholder) -->
+        <section id="settings" class="page">
+            <div class="container">
+                <h2>Settings</h2>
+                <p class="placeholder-text">Placeholder for settings feature</p>
+            </div>
+        </section>
+    </main>
 
     <script src="app.js"></script>
 </body>

@@ -1,3 +1,47 @@
+class Router {
+    constructor() {
+        this.currentPage = 'dashboard';
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen for nav button clicks
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                this.navigateTo(page);
+            });
+        });
+    }
+
+    navigateTo(page) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Remove active state from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Show target page
+        const targetSection = document.getElementById(page);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+
+        // Mark nav link as active
+        const activeLink = document.querySelector(`[data-page="${page}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        this.currentPage = page;
+    }
+}
+
 class BudgetApp {
     constructor() {
         this.expenses = this.loadExpenses();
@@ -11,6 +55,9 @@ class BudgetApp {
         this.setupEventListeners();
         this.setTodayDate();
         this.render();
+
+        // Initialize Router after BudgetApp is ready
+        this.router = new Router();
     }
 
     setupEventListeners() {
