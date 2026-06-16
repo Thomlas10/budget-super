@@ -11,15 +11,15 @@
 - [x] La date est automatiquement définie à aujourd'hui
 - [x] Le bouton "Ajouter" crée l'entrée
 
-## User Story 2: Afficher la liste des dépenses
+## User Story 2: Afficher la liste des dépenses ✅ COMPLÉTÉE
 **En tant que** utilisateur,
 **Je veux** voir toutes mes dépenses dans une liste avec montant et catégorie,
 **Afin que** je puisse consulter mon historique de dépenses.
 
 **Critères d'acceptation:**
-- Les dépenses s'affichent par ordre chronologique (plus récentes en haut)
-- Chaque ligne affiche: date, catégorie, montant
-- La liste se met à jour quand j'ajoute une nouvelle dépense
+- [x] Les dépenses s'affichent par ordre chronologique (plus récentes en haut)
+- [x] Chaque ligne affiche: date, catégorie, montant
+- [x] La liste se met à jour quand j'ajoute une nouvelle dépense
 
 ## User Story 3: Voir le total des dépenses par catégorie
 **En tant que** utilisateur,
