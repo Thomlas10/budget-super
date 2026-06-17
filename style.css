@@ -1115,9 +1115,12 @@ body.dark-theme .subscription-card {
     color: #ffffff;
 }
 
-body.dark-theme .expense-date,
-body.dark-theme .expense-category {
+body.dark-theme .expense-date {
     color: #a0aec0;
+}
+
+body.dark-theme .expense-category {
+    color: #ffffff;
 }
 
 body.dark-theme .expense-amount {
@@ -1185,7 +1188,7 @@ body.dark-theme .category-bar-item {
 }
 
 body.dark-theme .category-label {
-    color: #a0aec0;
+    color: #ffffff;
 }
 
 body.dark-theme .category-amount {
@@ -1227,6 +1230,10 @@ body.dark-theme .subscription-delete-btn {
 body.dark-theme .goal-delete-btn:hover,
 body.dark-theme .subscription-delete-btn:hover {
     background-color: #b91c1c;
+}
+
+body.dark-theme .subscription-name {
+    color: #ffffff;
 }
 
 body.dark-theme .subscription-cost {

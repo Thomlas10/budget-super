@@ -460,10 +460,13 @@ class IncomeApp {
     handleAddIncome(e) {
         e.preventDefault();
 
+        const source = this.incomeSourceInput.value.trim();
+        const capitalizedSource = source.charAt(0).toUpperCase() + source.slice(1);
+
         const income = {
             id: Date.now(),
             amount: parseFloat(this.incomeAmountInput.value),
-            source: this.incomeSourceInput.value,
+            source: capitalizedSource,
             date: this.incomeDateInput.value
         };
 
@@ -884,9 +887,12 @@ class SubscriptionsApp {
     handleAddSubscription(e) {
         e.preventDefault();
 
+        const name = this.subscriptionNameInput.value.trim();
+        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+
         const subscription = {
             id: Date.now(),
-            name: this.subscriptionNameInput.value,
+            name: capitalizedName,
             monthlyCost: parseFloat(this.subscriptionCostInput.value),
             renewalDay: parseInt(this.subscriptionRenewalDayInput.value),
             createdDate: new Date().toISOString().split('T')[0]
