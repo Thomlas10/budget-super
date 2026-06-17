@@ -1204,6 +1204,10 @@ body.dark-theme .goal-remaining {
     color: #a0aec0;
 }
 
+body.dark-theme .goal-header {
+    color: #ffffff;
+}
+
 body.dark-theme .goal-percentage {
     color: #ffffff;
     font-weight: 600;

@@ -762,9 +762,12 @@ class GoalsApp {
     handleAddGoal(e) {
         e.preventDefault();
 
+        const name = this.goalNameInput.value.trim();
+        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+
         const goal = {
             id: Date.now(),
-            name: this.goalNameInput.value,
+            name: capitalizedName,
             targetAmount: parseFloat(this.goalTargetInput.value),
             currentAmount: parseFloat(this.goalCurrentInput.value),
             createdDate: new Date().toISOString().split('T')[0]
