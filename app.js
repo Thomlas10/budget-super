@@ -1282,6 +1282,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // CRITICAL: Run universal text switcher LAST to ensure EVERYTHING is translated
     translateEntireDOM();
 
+    // Handle logo click - navigate to dashboard without page reload
+    const appLogo = document.getElementById('appLogo');
+    if (appLogo) {
+        appLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            budgetApp.router.navigateTo('dashboard');
+        });
+    }
+
     // Smart scroll-driven navbar: hide on scroll down, reveal on scroll up
     initNavbarScrollAnimation();
 });

@@ -3,8 +3,5 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "npx browser-sync start --server --files '*.html, *.css, *.js'"
-  },
-  "devDependencies": {
-    "playwright": "^1.61.0"
   }
 }
